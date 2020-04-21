@@ -7,25 +7,26 @@ consumer.go and producer.go must be compiled (go build ....go) and launched. con
 send data that consumer will... consume.
 
 The producer :
-It pass through all pages of listings from the first, and exract for each, each offer URL.
+It pass through all pages of listings from the first, and extract for each, each offer URL.
 It lack a blacklist, since one URL that does not lead to an offer, look like one that does, but should not be treated further.
 It does send each url through a kafka broker, with the topic web-adresses.
 A kafka broker must be started to work.
 
 The consumer :
-It does only read from a topic and print the URL in the standard output.
-If I may not be able to complete this part, the next potential questions would have been which criteria would I have considered to 
-save data from an offer?
-Since some data may be irrelevant to the offer itself. The project subject says to save a maximum of data from an offert, so, 
-one possible approach to this question may have been to save everything, and to worry about the treatment later (outside of the project). 
-I think I would have chose this last possibility.
+It does read from a topic, download a page from the url read, and save its data to a mongodb database (local, with docker in my case)
+The data currently saved is only the url itself. In the end, I would like to save all the field bellow "<div class="small-12 columns">&nbsp;</div>"
+since, everything outside of this box is irrelevant to the offer itself. But, we could go by every field and save them all with the url if wanted.
 
-
-MongoDB Atlas :
-Currently does not allow connection for an unknown reason. Neither from go drivers, or from MongoDB graphic official tools.
-Once this problem is solved, adding data to the database wouldn't be a problem.
+MongoDB local, thanks to docker :
+The database is launched with this line, after installing docker
+sudo docker run -d -p 27017-27019:27017-27019 --name mongodb mongo:4.0.4
+The mongodb shell cann be accessed with:  sudo docker exec -it mongodb bash
+In it, you can see the saved datas.
 
 Global note :
-I would have made a more comfortable code if I had the time I was supposed to get for the project.
-I'm not sure if the current state of the project is of any relevance to you to be the judge of my qualities as a coder,
-but regarding my current situation, it's better than nothing.
+Thank you for the enanced delay.
+At least I have been able to make and end to end project.
+I hope you can see what you wanted to see in this almost finished work.
+This version is still not as complete as I would have want to give you, but I'm still not completely healthy either. So commiting/pushin in case of no more 
+improvement.
+
