@@ -14,6 +14,8 @@ import (
 	"gopkg.in/confluentinc/confluent-kafka-go.v1/kafka"
 )
 
+// data format to save into the database
+
 type Auto struct {
 	Url    string
 	Fields []Tuple
@@ -28,10 +30,7 @@ func initialize_auto(url string, fields_nbr int) Auto {
 	return Auto{url, make([]Tuple, fields_nbr)}
 }
 
-//Must download one page and get a maximum of data to then save in the DB
-// The commented code is work in progress that does not currently work. The db stay inaccessible for some reason.
-// The download part works, but since I was trying to get acces to the DB to save the parts of the page, I commented
-// this part as well.
+// Must download one page and get a maximum of data from it and then save them into the DB
 func treatOneOffer(current_offer string, collection *mongo.Collection) {
 	response, err := http.Get(current_offer)
 	if err != nil {
@@ -48,10 +47,15 @@ func treatOneOffer(current_offer string, collection *mongo.Collection) {
 	document.Find("div").Each(func(index int, element *goquery.Selection) {
 		element_class, exists := element.Attr("class")
 		if exists && strings.HasPrefix(element_class, "small-12 bg-box landing  columns") {
-			// Produce messages to topic (asynchronously)
 			// fill up current_auto with any fields found below this div, since it does englobe the whole offer.
-			// The rest of the page is useless
+			// The rest of the page is useless.
 			// WIP, simulating one data found for now
+			// After research, I did not find a good way to save the found data in the mongoDB. As in, which format must be saved.
+			// Should I save the whole html as it is in the database? Each fields and their attributes one by one?
+			// I think my biggest lack of skill stands here, as I do not have a lot experience with html files.
+			// I understand them fine, but, never had to manipulate them a lot.
+			// I let the code as it is, to simulate a way to save data. The struc "Tuple", must be replaced by whatever format we
+			// want to save the datas into the DB, starting from this div.
 			current_auto.Fields = append(current_auto.Fields, Tuple{"fieldname", "fieldcontent"})
 		}
 	})
@@ -92,6 +96,7 @@ func main() {
 	c.SubscribeTopics([]string{"web-adresses", "^aRegex.*[Tt]opic"}, nil)
 	defer c.Close()
 
+	//infinte loop to keep receiving and treating url.
 	for {
 		msg, err := c.ReadMessage(-1)
 		if err == nil {

@@ -35,6 +35,7 @@ func sendAllUrlsFromListingUrl(current_link string, topic string, p *kafka.Produ
 			}, nil)
 		}
 	})
+	// Find the link to the next listing page to process
 	var next_link string
 	fmt.Println("Hey [" + next_link + "]")
 	document.Find("a").Each(func(index int, element *goquery.Selection) {
@@ -76,7 +77,7 @@ func main() {
 
 	topic := "web-adresses"
 
-	// Make HTTP request
+	// start with the first adresse of the listing, and keep on with the next ones
 	current_link := "http://www.autoreflex.com/137.0.-1.-1.-1.0.999999.1900.999999.-1.99.0.1?fulltext=&amp;geoban=M137R99"
 	for current_link = sendAllUrlsFromListingUrl(current_link, topic, p); current_link != ""; current_link = sendAllUrlsFromListingUrl(current_link, topic, p) {
 
